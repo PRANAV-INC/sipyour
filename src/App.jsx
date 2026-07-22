@@ -48,6 +48,43 @@ const appearanceOptions = [
   { id: 'light', title: 'Light Premium', desc: 'Soft and serene', accent: 'from-white to-cyan-100' },
 ];
 
+const dashboardSummaryCards = [
+  { label: 'Today’s Delivery', value: '3 Bottles', detail: 'On schedule' },
+  { label: 'This Month', value: '24 Orders', detail: 'Steady growth' },
+  { label: 'Water Consumed', value: '3.2L', detail: 'Optimal range' },
+  { label: 'Money Saved', value: '₹480', detail: 'With plan' },
+];
+
+const deliverySteps = [
+  { title: 'Order Confirmed', detail: 'Your plan is locked in' },
+  { title: 'Packed', detail: 'Bottle set prepared' },
+  { title: 'Out for Delivery', detail: 'Driver is on the way' },
+  { title: 'Reached Nearby', detail: 'Almost at your door' },
+  { title: 'Delivered', detail: 'Fresh water received' },
+];
+
+const analyticsBars = [30, 60, 45, 72, 88, 65, 90];
+const activityItems = [
+  { title: 'Today’s delivery arrived', time: '08:20', icon: '🚚' },
+  { title: 'Upcoming refill scheduled', time: 'Tomorrow', icon: '💧' },
+  { title: 'Payment confirmed', time: 'Yesterday', icon: '✅' },
+  { title: 'Support request resolved', time: '2 days ago', icon: '🎧' },
+];
+const quickActions = [
+  { label: 'Order Water', icon: '🛒' },
+  { label: 'Pause Subscription', icon: '⏸️' },
+  { label: 'Change Plan', icon: '🔄' },
+  { label: 'Download Invoice', icon: '📄' },
+  { label: 'Contact Support', icon: '💬' },
+  { label: 'Emergency Delivery', icon: '🚨' },
+];
+const weatherStats = [
+  { label: 'Temp', value: '31°C' },
+  { label: 'Humidity', value: '58%' },
+  { label: 'UV', value: 'High' },
+  { label: 'Goal', value: '3.5L' },
+];
+
 const deliveryItems = [
   'Delivery Alerts',
   'Auto Refill',
@@ -74,6 +111,45 @@ function ToggleSwitch({ checked, onChange }) {
     >
       <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${checked ? 'translate-x-6' : 'translate-x-1'}`} />
     </button>
+  );
+}
+
+function CircularProgress({ value, label, sublabel }) {
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (value / 100) * circumference;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative flex h-36 w-36 items-center justify-center">
+        <svg viewBox="0 0 140 140" className="h-36 w-36 -rotate-90">
+          <circle cx="70" cy="70" r={radius} stroke="rgba(255,255,255,0.25)" strokeWidth="12" fill="none" />
+          <circle
+            cx="70"
+            cy="70"
+            r={radius}
+            stroke="url(#qualityGradient)"
+            strokeWidth="12"
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+          />
+          <defs>
+            <linearGradient id="qualityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#22d3ee" />
+              <stop offset="100%" stopColor="#2563eb" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="absolute text-center">
+          <p className="text-3xl font-semibold text-slate-900">{value}%</p>
+          <p className="text-sm text-slate-600">Purity</p>
+        </div>
+      </div>
+      <p className="mt-3 text-lg font-semibold text-slate-900">{label}</p>
+      <p className="text-sm text-slate-600">{sublabel}</p>
+    </div>
   );
 }
 
@@ -109,45 +185,198 @@ function App() {
     switch (activePage) {
       case 'dashboard':
         return (
-          <section className="grid gap-6 rounded-[2rem] border border-cyan-400/20 bg-white/75 p-8 shadow-[0_20px_80px_rgba(14,116,144,0.1)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Dashboard</p>
-              <h2 className="mt-3 text-3xl font-bold text-slate-900">Stay in control of every fresh delivery.</h2>
-              <p className="mt-4 max-w-xl text-slate-600">
-                Your home hydration plan is now clearer, faster, and easier to manage in one place.
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                {dashboardHighlights.map((item) => (
-                  <div key={item.title} className="rounded-2xl border border-cyan-100 bg-cyan-50/80 p-4">
-                    <p className="text-sm text-slate-500">{item.title}</p>
-                    <p className="mt-2 text-2xl font-semibold text-slate-900">{item.value}</p>
-                    <p className="mt-1 text-sm text-slate-600">{item.detail}</p>
+          <section className="relative overflow-hidden rounded-[2.5rem] border border-white/60 bg-slate-950/20 p-6 shadow-[0_30px_90px_rgba(14,116,144,0.16)] backdrop-blur-2xl lg:p-8">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.18),_transparent_35%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.22),_transparent_38%),linear-gradient(135deg,_rgba(7,89,133,0.4),_rgba(2,132,199,0.15))]" />
+              <div className="absolute left-0 top-0 h-40 w-40 rounded-full bg-cyan-300/20 blur-3xl" />
+              <div className="absolute right-10 top-10 h-56 w-56 rounded-full bg-sky-200/20 blur-3xl" />
+              <div className="absolute bottom-0 left-1/4 h-24 w-24 rounded-full border border-cyan-200/30" />
+              <div className="absolute bottom-8 right-1/4 h-16 w-16 rounded-full border border-cyan-200/30" />
+            </div>
+
+            <div className="relative grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-6">
+                <div className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                  <p className="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-700">Dashboard</p>
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Good Morning, Pranav 👋</h2>
+                  <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">
+                    Your SipYour experience is running beautifully. Fresh water, smart delivery, and premium comfort are all in sync.
+                  </p>
+                  <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    {dashboardSummaryCards.map((item) => (
+                      <div key={item.label} className="rounded-[1.2rem] border border-cyan-100/80 bg-gradient-to-br from-cyan-50 to-white p-4 shadow-sm">
+                        <p className="text-sm text-slate-500">{item.label}</p>
+                        <p className="mt-2 text-xl font-semibold text-slate-900">{item.value}</p>
+                        <p className="mt-1 text-sm text-slate-600">{item.detail}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+                  <div className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Live Water Quality</p>
+                        <h3 className="mt-2 text-2xl font-semibold text-slate-900">Ultra-pure hydration</h3>
+                      </div>
+                      <div className="rounded-full bg-cyan-50 px-3 py-1 text-sm font-medium text-cyan-700">Excellent</div>
+                    </div>
+                    <div className="mt-6 flex flex-col items-center justify-center gap-6 md:flex-row">
+                      <CircularProgress value={99.9} label="Purity Metrics" sublabel="TDS 24 · pH 7.2" />
+                      <div className="space-y-3 text-sm text-slate-600">
+                        <div className="rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 px-4 py-3">
+                          <p className="font-semibold text-slate-900">TDS Level</p>
+                          <p className="mt-1">24 ppm • Mineral balance ideal</p>
+                        </div>
+                        <div className="rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 px-4 py-3">
+                          <p className="font-semibold text-slate-900">pH Value</p>
+                          <p className="mt-1">7.2 • Smooth and refreshing</p>
+                        </div>
+                        <div className="rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 px-4 py-3">
+                          <p className="font-semibold text-slate-900">Status</p>
+                          <p className="mt-1">Ready to serve</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Quick Actions</p>
+                        <h3 className="mt-2 text-2xl font-semibold text-slate-900">Instant control</h3>
+                      </div>
+                    </div>
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {quickActions.map((action) => (
+                        <button key={action.label} type="button" className="group relative overflow-hidden rounded-[1.1rem] border border-cyan-100/80 bg-gradient-to-br from-cyan-50 to-white px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-300 hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(14,116,144,0.12)]">
+                          <span className="relative z-10 flex items-center gap-2">
+                            <span className="text-lg">{action.icon}</span>
+                            {action.label}
+                          </span>
+                          <span className="absolute inset-0 translate-x-[-120%] bg-white/30 transition-transform duration-700 group-hover:translate-x-[120%]" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative flex items-center justify-center">
+                <div className="relative h-[400px] w-full max-w-[360px] overflow-hidden rounded-[2.2rem] border border-white/60 bg-gradient-to-br from-cyan-100/90 via-white to-sky-100/90 p-6 shadow-[0_24px_70px_rgba(14,116,144,0.16)]">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_55%)]" />
+                  <div className="absolute inset-x-8 bottom-8 h-20 rounded-full bg-cyan-200/20 blur-2xl" />
+                  <div className="absolute left-7 top-8 h-4 w-4 rounded-full bg-white/80" />
+                  <div className="absolute right-8 top-12 h-3 w-3 rounded-full bg-cyan-100/80" />
+                  <div className="absolute bottom-8 left-9 h-3 w-3 rounded-full bg-white/70" />
+                  <div className="relative flex h-full items-center justify-center">
+                    <div className="animate-[spin_10s_linear_infinite] relative">
+                      <img src="/bottle.png" alt="SipYour bottle" className="relative h-64 w-auto object-contain drop-shadow-[0_25px_60px_rgba(8,145,178,0.28)]" />
+                      <div className="absolute -left-5 top-10 h-5 w-5 rounded-full border border-cyan-100/60" />
+                      <div className="absolute -right-2 bottom-8 h-3 w-3 rounded-full bg-white/70" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-cyan-100 bg-gradient-to-br from-sky-50 to-cyan-50 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Current plan</p>
-                  <p className="mt-2 text-2xl font-semibold text-slate-900">Premium Family</p>
+            <div className="relative mt-8 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+              <section className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Delivery Timeline</p>
+                    <h3 className="mt-2 text-2xl font-semibold text-slate-900">Your journey in motion</h3>
+                  </div>
                 </div>
-                <div className="rounded-full bg-white/80 px-3 py-1 text-sm font-semibold text-cyan-700">Active</div>
-              </div>
-              <div className="mt-6 space-y-3 text-sm text-slate-600">
-                <div className="flex items-center justify-between rounded-xl bg-white/80 px-4 py-3">
-                  <span>Next refill</span>
-                  <span className="font-semibold text-slate-900">Tomorrow</span>
+                <div className="mt-6 space-y-4">
+                  {deliverySteps.map((step, index) => (
+                    <div key={step.title} className="flex items-center gap-4 rounded-[1.1rem] border border-cyan-100/80 bg-cyan-50/70 p-4">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${index === deliverySteps.length - 1 ? 'bg-cyan-600 text-white' : 'bg-white text-cyan-700'} shadow-sm`}>
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-slate-900">{step.title}</p>
+                        <p className="text-sm text-slate-600">{step.detail}</p>
+                      </div>
+                      {index < deliverySteps.length - 1 && <div className="hidden h-1 w-14 rounded-full bg-gradient-to-r from-cyan-300 to-sky-400 md:block" />}
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-white/80 px-4 py-3">
-                  <span>Service area</span>
-                  <span className="font-semibold text-slate-900">{selectedCity}</span>
+              </section>
+
+              <section className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Smart Hydration Analytics</p>
+                    <h3 className="mt-2 text-2xl font-semibold text-slate-900">Weekly and monthly insight</h3>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-white/80 px-4 py-3">
-                  <span>Support</span>
-                  <span className="font-semibold text-slate-900">24/7</span>
+                <div className="mt-6 flex h-48 items-end gap-3">
+                  {analyticsBars.map((height, index) => (
+                    <div key={index} className="flex-1 rounded-t-[1rem] bg-gradient-to-t from-cyan-600 to-sky-400" style={{ height: `${height}%` }} />
+                  ))}
                 </div>
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  {[
+                    ['41L', 'Monthly delivery'],
+                    ['8.4L', 'Avg. daily use'],
+                    ['76%', 'Family adoption'],
+                  ].map(([value, label]) => (
+                    <div key={label} className="rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 p-3 text-center">
+                      <p className="text-lg font-semibold text-slate-900">{value}</p>
+                      <p className="text-sm text-slate-600">{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <div className="relative mt-8 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+              <section className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Recent Activity</p>
+                    <h3 className="mt-2 text-2xl font-semibold text-slate-900">Today’s flow</h3>
+                  </div>
+                </div>
+                <div className="mt-6 space-y-3">
+                  {activityItems.map((item) => (
+                    <div key={item.title} className="flex items-center gap-3 rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 p-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg shadow-sm">{item.icon}</div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-slate-900">{item.title}</p>
+                        <p className="text-sm text-slate-600">{item.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <div className="grid gap-6">
+                <section className="rounded-[2rem] border border-white/60 bg-gradient-to-br from-cyan-600 to-blue-700 p-6 text-white shadow-[0_20px_50px_rgba(14,116,144,0.12)]">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-100">AI Recommendation</p>
+                  <h3 className="mt-2 text-2xl font-semibold">Hot weather calls for a slightly larger refill</h3>
+                  <p className="mt-3 text-sm leading-7 text-cyan-50">Based on your usage, we recommend a 20L plan for the next two days and a morning delivery window.</p>
+                </section>
+
+                <section className="rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_rgba(14,116,144,0.12)] backdrop-blur-xl">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Weather & Hydration</p>
+                      <h3 className="mt-2 text-2xl font-semibold text-slate-900">Today’s wellness guide</h3>
+                    </div>
+                    <div className="text-3xl">☀️</div>
+                  </div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {weatherStats.map((item) => (
+                      <div key={item.label} className="rounded-[1rem] border border-cyan-100/80 bg-cyan-50/70 p-4">
+                        <p className="text-sm text-slate-500">{item.label}</p>
+                        <p className="mt-2 text-lg font-semibold text-slate-900">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
             </div>
           </section>
@@ -831,14 +1060,22 @@ function App() {
         {renderPage()}
       </main>
 
-      <footer className="border-t border-cyan-100/70 bg-white/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:px-8">
+      <footer className="relative overflow-hidden border-t border-cyan-100/70 bg-white/70 backdrop-blur-xl">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute left-0 top-0 h-40 w-40 rounded-full bg-cyan-200/20 blur-3xl" />
+          <div className="absolute right-8 top-8 h-48 w-48 rounded-full bg-sky-200/20 blur-3xl" />
+        </div>
+        <div className="relative mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr_0.8fr]">
             <div>
               <p className="text-2xl font-black tracking-[0.3em] text-cyan-700">SIPYOUR</p>
               <p className="mt-3 text-lg font-semibold text-slate-800">Pure Water. Pure Life.</p>
               <p className="mt-2 max-w-md text-sm leading-7 text-slate-600">Premium hydration designed for modern homes, offices, and unforgettable everyday rituals.</p>
-              <p className="mt-4 text-sm text-slate-500">hello@sipyour.com • +91 98765 43210</p>
+              <div className="mt-4 flex flex-wrap gap-2 text-sm text-slate-600">
+                <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1">99.9% Trusted</span>
+                <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1">ISO Certified</span>
+                <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1">4.9/5 Rated</span>
+              </div>
             </div>
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">Quick links</p>
@@ -865,12 +1102,12 @@ function App() {
                 ))}
               </div>
               <div className="rounded-[1.25rem] border border-cyan-100 bg-cyan-50/80 p-4">
-                <p className="text-sm font-semibold text-slate-800">Download the app</p>
+                <p className="text-sm font-semibold text-slate-800">Join the newsletter</p>
                 <div className="mt-3 flex items-center gap-3">
                   <div className="grid h-16 w-16 place-items-center rounded-[1rem] border border-cyan-200 bg-white text-center text-[10px] font-semibold text-slate-700">
                     QR
                   </div>
-                  <div className="text-sm text-slate-600">Scan to get the latest sip updates and app access.</div>
+                  <div className="text-sm text-slate-600">Scan to receive premium updates and app access.</div>
                 </div>
               </div>
             </div>
